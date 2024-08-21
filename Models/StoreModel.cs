@@ -26,6 +26,8 @@ namespace MultisiteEventing.Models
         [Key]
         public int Id { get; set; }
 
+        public string? LocationName { get; set; }
+
         [Required(ErrorMessage = "Display ID is required.")]
         public int DisplayId {get;set;}
 

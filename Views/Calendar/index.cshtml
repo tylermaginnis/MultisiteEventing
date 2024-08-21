@@ -41,7 +41,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="eventColor" class="form-label">Event Color</label>
-                        <input type="color" class="form-control" id="eventColor" name="Color" required>
+                        <input type="color" class="form-control" id="eventColor" name="Color" value="#E0B0FF" required>
                     </div>
                     <div class="mb-3">
                         <label for="eventClient" class="form-label">Event Client</label>
@@ -58,6 +58,7 @@
                                     }
                                 }
                             }
+\
                         </select>
                     </div>
                     <div class="mb-3">
@@ -66,11 +67,40 @@
                             @if (ViewData["Clients"] != null)
                             {
                                 var clients = ViewData["Clients"] as List<MultisiteEventing.Models.Client>;
+                                var selectedClientId = ViewData["SelectedClientId"] as int?;
                                 if (clients != null)
                                 {
                                     foreach (var client in clients)
                                     {
-                                        <option value="@client.Id">@client.Name</option>
+                                        if (client.Id != selectedClientId)
+                                        {
+                                            <option value="@client.Id">@client.Name</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">No clients available</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="">No clients available</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventStore" class="form-label">Event Store</label>
+                        <select multiple class="form-control" id="eventStore" name="Store" required>
+                            <option value="">-- Select Store --</option>
+                            @if (ViewData["StoreLocations"] != null)
+                            {
+                                var storeLocations = ViewData["StoreLocations"] as List<dynamic>;
+                                if (storeLocations != null)
+                                {
+                                    foreach (var location in storeLocations)
+                                    {
+                                        <option value="@location.LocationId">@location.LocationName</option>
                                     }
                                 }
                             }
@@ -85,27 +115,18 @@
 
 @section Scripts {
     <script>
+        var calendar; // Declare a global variable for the calendar
+
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek', // Use timeGridWeek for Outlook-like view
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                events: [
-                    {
-                        title: 'Event 1',
-                        start: '2023-05-01',
-                        color: '#378006'
-                    },
-                    {
-                        title: 'Event 2',
-                        start: '2023-05-05',
-                        color: '#ff0000'
-                    }
-                ],
+                events: [],
                 eventColor: '#378006'
             });
             calendar.render();
@@ -118,11 +139,9 @@
                 start: form.find('input[name="Date"]').val(),
                 color: form.find('input[name="Color"]').val(),
                 client: form.find('select[name="Client"]').val(),
-                complimentaryClients: form.find('select[name="ComplimentaryClients"]').val()
+                complimentaryClients: form.find('select[name="ComplimentaryClients"]').val(),
+                store: form.find('select[name="Store"]').val()
             };
-
-            var calendarEl = document.getElementById('calendar');
-            var calendar = FullCalendar.Calendar.getCalendar(calendarEl);
             calendar.addEvent(eventData);
 
             $('#addEventModal').modal('hide');
