@@ -6,7 +6,7 @@ Welcome to MultisiteEventing, a powerful web application designed to streamline 
 
 ### Demo Images
 
-![Dashboard](images/dashboard.png)
+![Dashboard](images/dashboard.PNG)
 *Dashboard view of MultisiteEventing.*
 
 ![Asset Management](images/asset_management.png)
