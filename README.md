@@ -9,10 +9,28 @@ Welcome to MultisiteEventing, a powerful web application designed to streamline 
 ![Dashboard](images/dashboard.PNG)
 *Dashboard view of MultisiteEventing.*
 
-![Asset Management](images/asset_management.png)
-*Asset management interface.*
+![Event Creation](images/event_create.PNG)
+*Calendar view of MultisiteEventing.*
 
-![Client Management](images/client_management.png)
+![Event Management](images/event_manage.PNG)
+*Event management interface.*
+
+![Asset Creation](images/asset_create.PNG)
+*Asset creation interface.*
+
+![Asset Management](images/asset_manage.PNG)
+*Asset management interface.
+
+![Store Creation](images/store_create.PNG)
+*Store creation interface.*
+
+![Store Management](images/store_manage.PNG)
+*Store management interface.*
+
+![Client Creation](images/client_create.PNG)
+*Client creation interface.*
+
+![Client Management](images/client_manage.PNG)
 *Client management interface.*
 
 ### Key Benefits
