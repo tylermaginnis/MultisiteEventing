@@ -10,10 +10,10 @@ Welcome to MultisiteEventing, a powerful web application designed to streamline 
 *Dashboard view of MultisiteEventing.*
 
 ![Event Creation](images/event_create.PNG)
-*Calendar view of MultisiteEventing.*
+*Event creation interface.*
 
 ![Event Management](images/event_manage.PNG)
-*Event management interface.*
+*Event calendar management interface.*
 
 ![Asset Creation](images/asset_create.PNG)
 *Asset creation interface.*
