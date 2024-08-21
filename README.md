@@ -5,32 +5,31 @@
 Welcome to MultisiteEventing, a powerful web application designed to streamline the management and scheduling of events across multiple locations. This user-friendly platform allows you to efficiently handle assets, clients, and stores associated with your events, ensuring a smooth and organized event planning process.
 
 ### Demo Images
-
-![Dashboard](images/dashboard.PNG)
+<img src="images/dashboard.PNG" alt="Dashboard" width="50%">
 *Dashboard view of MultisiteEventing.*
 
-![Event Creation](images/event_create.PNG)
+<img src="images/event_create.PNG" alt="Event Creation" width="50%">
 *Event creation interface.*
 
-![Event Management](images/event_manage.PNG)
+<img src="images/event_manage.PNG" alt="Event Management" width="50%">
 *Event calendar management interface.*
 
-![Asset Creation](images/asset_create.PNG)
+<img src="images/asset_create.PNG" alt="Asset Creation" width="50%">
 *Asset creation interface.*
 
-![Asset Management](images/asset_manage.PNG)
-*Asset management interface.
+<img src="images/asset_manage.PNG" alt="Asset Management" width="50%">
+*Asset management interface.*
 
-![Store Creation](images/store_create.PNG)
+<img src="images/store_create.PNG" alt="Store Creation" width="50%">
 *Store creation interface.*
 
-![Store Management](images/store_manage.PNG)
+<img src="images/store_manage.PNG" alt="Store Management" width="50%">
 *Store management interface.*
 
-![Client Creation](images/client_create.PNG)
+<img src="images/client_create.PNG" alt="Client Creation" width="50%">
 *Client creation interface.*
 
-![Client Management](images/client_manage.PNG)
+<img src="images/client_manage.PNG" alt="Client Management" width="50%">
 *Client management interface.*
 
 ### Key Benefits
