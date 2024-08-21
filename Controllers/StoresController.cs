@@ -150,8 +150,78 @@ namespace MultisiteEventing.Controllers
                     }
 
                     _cache.Set(CacheKey, stores);
-                    return Json(new { success = true });
+                    return Json(new { success = true, newId = request.Contact.Id });
+
                 }
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public IActionResult StoreLocationContactDelete([FromBody] DeleteStoreLocationContactRequest request)
+        {
+            var stores = _cache.Get<List<Store>>(CacheKey);
+            var store = stores.FirstOrDefault(s => s.Id == request.StoreId);
+            if (store != null)
+            {
+                var location = store.Locations.FirstOrDefault(l => l.Id == request.LocationId);
+                if (location != null)
+                {
+                    var contact = location.Contacts.FirstOrDefault(c => c.Id == request.ContactId);
+                    if (contact != null)
+                    {
+                        location.Contacts.Remove(contact);
+                        _cache.Set(CacheKey, stores);
+                        return Json(new { success = true });
+                    }
+                }
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public IActionResult SaveLocation([FromBody] SaveLocationRequest request)
+        {
+            var stores = _cache.Get<List<Store>>(CacheKey);
+            var store = stores.FirstOrDefault(s => s.Id == request.StoreId);
+            if (store != null)
+            {
+                var existingLocation = store.Locations.FirstOrDefault(l => l.Id == request.Location.Id);
+                if (existingLocation != null)
+                {
+                    //existingLocation.Name = request.Location.Name;
+                    existingLocation.Address = request.Location.Address;
+                    //existingLocation.City = request.Location.City;
+                    // Removed State and ZipCode as they are not defined in Location
+                    // existingLocation.State = request.Location.State;
+                    // existingLocation.ZipCode = request.Location.ZipCode;
+
+                    // Update contacts
+                    foreach (var contact in request.Location.Contacts)
+                    {
+                        var existingContact = existingLocation.Contacts.FirstOrDefault(c => c.Id == contact.Id);
+                        if (existingContact != null)
+                        {
+                            existingContact.Name = contact.Name;
+                            existingContact.Phone = contact.Phone;
+                            existingContact.Email = contact.Email;
+                            existingContact.Role = contact.Role;
+                        }
+                        else
+                        {
+                            contact.Id = existingLocation.Contacts.Count > 0 ? existingLocation.Contacts.Max(c => c.Id) + 1 : 1;
+                            existingLocation.Contacts.Add(contact);
+                        }
+                    }
+                }
+                else
+                {
+                    request.Location.Id = store.Locations.Count > 0 ? store.Locations.Max(l => l.Id) + 1 : 1;
+                    store.Locations.Add(request.Location);
+                }
+
+                _cache.Set(CacheKey, stores);
+                return Json(new { success = true, newId = request.Location.Id });
             }
             return Json(new { success = false });
         }
@@ -161,6 +231,19 @@ namespace MultisiteEventing.Controllers
             public int StoreId { get; set; }
             public int LocationId { get; set; }
             public Contact Contact { get; set; }
+        }
+
+        public class DeleteStoreLocationContactRequest
+        {
+            public int StoreId { get; set; }
+            public int LocationId { get; set; }
+            public int ContactId { get; set; }
+        }
+
+        public class SaveLocationRequest
+        {
+            public int StoreId { get; set; }
+            public Location Location { get; set; }
         }
     }
 }

@@ -6,13 +6,154 @@
     <h1 class="display-4 text-center">Clients</h1>
     <div class="row">
         <div class="col-md-12">
-            <p class="text-center">This is the Clients view where you can see all the scheduled events.</p>
+            <p class="text-center">This is the Clients view where you can see all the clients and their details.</p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <!-- Calendar content will be added here -->
-            <div id="clients"></div>
+            <div class="client-actions">
+                <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Clients")'">Add Client</button>
+            </div>
+            <div class="client-list">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var client in Model)
+                        {
+                            <tr>
+                                <td>@client.Name</td>
+                                <td>@client.Description</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailsModal-@client.Id">View Details</button>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal-@client.Id">Update</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteClient(@client.Id)">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+@foreach (var client in Model)
+{
+    <div class="modal fade" id="detailsModal-@client.Id" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel-@client.Id" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel-@client.Id">Client Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Name:</strong> @client.Name</p>
+                    <p><strong>Description:</strong> @client.Description</p>
+                    <p><strong>Assets:</strong></p>
+                    <ul>
+                        @if (ViewData["Assets"] != null)
+                        {
+                            var assets = ViewData["Assets"] as List<MultisiteEventing.Models.AssetModel>;
+                            if (assets != null)
+                            {
+                                foreach (var asset in assets)
+                                {
+                                    <li>@asset.Name</li>
+                                }
+                            }
+                        }
+                    </ul>
+                    <p><strong>Events:</strong></p>
+                    <ul>
+                        @foreach (var evt in client.Events ?? Enumerable.Empty<MultisiteEventing.Models.Event>())
+                        {
+                            <li>@evt.Title</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal-@client.Id" tabindex="-1" role="dialog" aria-labelledby="editModalLabel-@client.Id" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel-@client.Id">Edit Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editClientForm-@client.Id">
+                        <input type="hidden" name="id" value="@client.Id" />
+                        <div class="mb-3">
+                            <label for="name-@client.Id" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name-@client.Id" name="Name" value="@client.Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description-@client.Id" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description-@client.Id" name="Description" value="@client.Description">
+                        </div>
+                        <div class="mb-3">
+                            <label for="assets-@client.Id" class="form-label">Assets</label>
+                            <select multiple class="form-control" id="assets-@client.Id" name="Assets">
+                            @if (ViewData["Assets"] != null)
+                            {
+                                var assets = ViewData["Assets"] as List<MultisiteEventing.Models.AssetModel>;
+                                if (assets != null)
+                                {
+                                    foreach (var asset in assets)
+                                    {
+                                        <option value="@asset.Id">@asset.Name</option>
+                                    }
+                                }
+                            }
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="editClient(@client.Id)">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function deleteClient(clientId) {
+        if (confirm('Are you sure you want to delete this client?')) {
+            $.ajax({
+                url: '@Url.Action("Delete", "Clients")',
+                type: 'POST',
+                data: { id: clientId },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting client.');
+                    }
+                }
+            });
+        }
+    }
+
+    function editClient(clientId) {
+        var form = $('#editClientForm-' + clientId);
+        $.ajax({
+            url: '@Url.Action("Edit", "Clients")',
+            type: 'POST',
+            data: form.serialize(),
+            success: function (result) {
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert('Error updating client.');
+                }
+            }
+        });
+    }
+</script>

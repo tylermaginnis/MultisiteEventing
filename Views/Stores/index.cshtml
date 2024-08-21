@@ -16,9 +16,9 @@
                 <div class="store-actions">
                     <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Stores")'">Add Store</button>
                 </div>
-                <div class="store-search">
+                <!--<div class="store-search">
                     <input type="text" id="searchStore" placeholder="Search by name or location" onkeyup="searchStores()">
-                </div>
+                </div>-->
                 <div class="store-list">
                     <table class="table table-striped">
                         <thead>
@@ -112,13 +112,13 @@
                                                                 @foreach (var locContact in location.Contacts ?? Enumerable.Empty<MultisiteEventing.Models.Contact>())
                                                                 {
                                                                     <tr>
-                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Name" value="@locContact.Name" readonly></td>
-                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Phone" value="@locContact.Phone" readonly></td>
-                                                                        <td><input type="email" class="form-control" name="Contacts[@locContact.Id].Email" value="@locContact.Email" readonly></td>
-                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Role" value="@locContact.Role" readonly></td>
+                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Name" value="@locContact.Name" readonly form="location-form-@location.Id"></td>
+                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Phone" value="@locContact.Phone" readonly form="location-form-@location.Id"></td>
+                                                                        <td><input type="email" class="form-control" name="Contacts[@locContact.Id].Email" value="@locContact.Email" readonly form="location-form-@location.Id"></td>
+                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Role" value="@locContact.Role" readonly form="location-form-@location.Id"></td>
                                                                         <td>
-                                                                            <button type="button" class="btn btn-warning" onclick="toggleEditContact(@locContact.Id)">Edit</button>
-                                                                            <button type="button" class="btn btn-danger" onclick="deleteContact(@locContact.Id)">Delete</button>
+                                                                            <button type="button" class="btn btn-warning" onclick="toggleEditContact(@locContact.Id, @location.Id, this)">Edit</button>
+                                                                            <button type="button" class="btn btn-danger" onclick="deleteContact(@locContact.Id, @location.Id, @store.Id)">Delete</button>
                                                                         </td>
                                                                     </tr>
                                                                 }
@@ -128,8 +128,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" onclick="toggleLocationDetails(@location.Id)">Cancel</button>
-                                                        <button type="button" class="btn btn-warning" onclick="toggleEditLocation(@location.Id)">Edit</button>
-                                                        <button type="submit" class="btn btn-primary" id="save-button-@location.Id" style="display:none;">Save</button>
+                                                        <button type="button" class="btn btn-warning" onclick="toggleEditLocation(@location.Id, this)">Edit</button>
                                                     </div>
                                                 </form>
                                             </td>
@@ -160,51 +159,135 @@
             detailsRow.style.display = "none";
         }
     }
-
-    function toggleEditLocation(locationId) {
+    function toggleEditLocation(locationId, button) {
         var form = document.getElementById("location-form-" + locationId);
         var inputs = form.querySelectorAll("input");
-        var saveButton = document.getElementById("save-button-" + locationId);
-        var editButton = document.querySelector("button[onclick='toggleEditLocation(" + locationId + ")']");
+
+        var isReadOnly = Array.from(inputs).every(input => input.readOnly);
 
         inputs.forEach(input => {
-            if (input.readOnly) {
-                input.readOnly = false;
-                saveButton.style.display = "";
-                editButton.style.display = "none";
-            } else {
-                input.readOnly = true;
-                saveButton.style.display = "none";
-                editButton.style.display = "";
+            input.readOnly = !input.readOnly;
+        });
+
+        if (isReadOnly) {
+            button.textContent = "Save";
+            button.classList.remove("btn-warning");
+            button.classList.add("btn-success");
+            button.setAttribute("onclick", `saveLocation(${locationId}, this)`);
+        }
+    }
+
+    function saveLocation(locationId, button) {
+        var form = document.getElementById("location-form-" + locationId);
+        var formData = new FormData(form);
+
+        fetch('/Stores/SaveLocation', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
             }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var inputs = form.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.readOnly = true;
+                });
+
+                button.textContent = "Edit";
+                button.classList.remove("btn-success");
+                button.classList.add("btn-warning");
+                button.setAttribute("onclick", `toggleEditLocation(${locationId}, this)`);
+            } else {
+                alert('Failed to save location');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to save location');
         });
     }
 
-    function saveLocation(locationId) {
-        var form = document.getElementById("location-form-" + locationId);
-        form.submit();
-    }
+    function toggleEditContact(contactId, locationId, button) {
+        console.log(`toggleEditContact called with contactId: ${contactId}, locationId: ${locationId}`);
 
-    function toggleEditContact(contactId) {
-        var contactRow = document.querySelector(`input[name='Contacts[${contactId}].Name']`).closest('tr');
+        // Try to find the contact row using the contact ID and location ID
+        var contactRow = document.querySelector(`input[name='Contacts[${contactId}].Name'][form='location-form-${locationId}']`);
+        if (!contactRow) {
+            console.log(`Contact row not found using Name input. Trying with Id input.`);
+            contactRow = document.querySelector(`input[name='Contacts[${contactId}].Id'][form='location-form-${locationId}']`);
+            if (contactRow) {
+                contactRow = contactRow.closest('tr');
+            } else {
+                console.error('Contact row not found');
+                return;
+            }
+        } else {
+            contactRow = contactRow.closest('tr');
+        }
+
+        console.log(`Contact row found:`, contactRow);
+
+        // Toggle the readOnly property of the inputs in the contact row
         var inputs = contactRow.querySelectorAll("input");
         inputs.forEach(input => {
             input.readOnly = !input.readOnly;
         });
+
+        // Toggle the button text and class
+        if (button.textContent === "Edit") {
+            button.textContent = "Save";
+            button.classList.remove("btn-warning");
+            button.classList.add("btn-success");
+        } else {
+            button.textContent = "Edit";
+            button.classList.remove("btn-success");
+            button.classList.add("btn-warning");
+        }
+    }
+    
+    function deleteContact(contactId, locationId, storeId) {
+        fetch('/Stores/StoreLocationContactDelete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ StoreId: storeId, LocationId: locationId, ContactId: contactId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var contactInput = document.querySelector(`input[name='Contacts[${contactId}].Id'][form='location-form-${locationId}']`);
+                if (contactInput) {
+                    var contactRow = contactInput.closest('tr');
+                    if (contactRow) {
+                        contactRow.remove();
+                    }
+                }
+            } else {
+                console.error('Failed to delete contact: Server returned success false');
+                alert('Failed to delete contact');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 
-    function deleteContact(contactId) {
-        // Implement the logic to delete the contact
-    }
     function addContact(storeId, locationId) {
         var locationTable = document.getElementById("location-contacts-" + storeId + "-" + locationId);
         if (locationTable) {
             var newRow = locationTable.insertRow();
+            var newId = locationTable.rows.length; // Ensure the id is always +1
             newRow.innerHTML = `
-                <td><input type="text" name="Contacts[New].Name" class="form-control" placeholder="Name"></td>
-                <td><input type="text" name="Contacts[New].Phone" class="form-control" placeholder="Phone"></td>
-                <td><input type="email" name="Contacts[New].Email" class="form-control" placeholder="Email"></td>
-                <td><input type="text" name="Contacts[New].Role" class="form-control" placeholder="Role"></td>
+                <td style="display: none;"><input type="hidden" name="Contacts[${newId}].Id" value="${newId}"></td>
+                <td><input type="text" name="Contacts[${newId}].Name" class="form-control" placeholder="Name"></td>
+                <td><input type="text" name="Contacts[${newId}].Phone" class="form-control" placeholder="Phone"></td>
+                <td><input type="email" name="Contacts[${newId}].Email" class="form-control" placeholder="Email"></td>
+                <td><input type="text" name="Contacts[${newId}].Role" class="form-control" placeholder="Role"></td>
                 <td><button type="button" class="btn btn-success" onclick="saveNewContact(${storeId}, ${locationId}, this)">Save</button></td>
             `;
         } else {
@@ -216,13 +299,16 @@
         var newRow = button.closest('tr');
         var inputs = newRow.querySelectorAll("input");
         var newContact = {};
+        var hiddenValue;
 
         inputs.forEach(input => {
             var name = input.name.split('.')[1];
             newContact[name] = input.value;
+            if (name === "Id") {
+                hiddenValue = input.value;
+            }
         });
 
-        // Implement the logic to save the new contact by hitting the controller action
         fetch('/Stores/SaveStoreLocationContact', {
             method: 'POST',
             headers: {
@@ -234,13 +320,42 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // After saving, update the row to remove the save button and make the inputs read-only
                 inputs.forEach(input => {
                     input.readOnly = true;
                 });
                 button.style.display = "none";
+
+                var actionsCell = newRow.querySelector('td:last-child');
+                actionsCell.innerHTML = '';
+                var editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.className = "btn btn-warning me-1";
+                editButton.textContent = "Edit";
+                editButton.onclick = function() {
+                    if (hiddenValue) {
+                        toggleEditContact(hiddenValue, locationId, this);
+                    } else {
+                        console.error('Contact ID is null or undefined');
+                    }
+                };
+
+                var deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "btn btn-danger";
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() {
+                    deleteContact(hiddenValue, locationId, storeId);
+                };
+
+                actionsCell.appendChild(editButton);
+                actionsCell.appendChild(deleteButton);
+
+                var hiddenField = document.createElement("input");
+                hiddenField.type = "hidden";
+                hiddenField.name = `Contacts[${hiddenValue}].Id`;
+                hiddenField.value = hiddenValue;
+                newRow.appendChild(hiddenField);
             } else {
-                // Handle error
                 alert('Failed to save contact');
             }
         })
@@ -249,4 +364,5 @@
             alert('Failed to save contact');
         });
     }
+
 </script>
