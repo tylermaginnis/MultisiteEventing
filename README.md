@@ -5,34 +5,32 @@
 Welcome to MultisiteEventing, a powerful web application designed to streamline the management and scheduling of events across multiple locations. This user-friendly platform allows you to efficiently handle assets, clients, and stores associated with your events, ensuring a smooth and organized event planning process.
 
 ### Demo Images
-<div align="center">
-    <img src="images/dashboard.PNG" alt="Dashboard" width="50%">
-    <p><em>Dashboard view of MultisiteEventing.</em></p>
+<img src="images/dashboard.PNG" alt="Dashboard" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Dashboard view of MultisiteEventing.*</p>
 
-    <img src="images/event_create.PNG" alt="Event Creation" width="50%">
-    <p><em>Event creation interface.</em></p>
+<img src="images/event_create.PNG" alt="Event Creation" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Event creation interface.*</p>
 
-    <img src="images/event_manage.PNG" alt="Event Management" width="50%">
-    <p><em>Event calendar management interface.</em></p>
+<img src="images/event_manage.PNG" alt="Event Management" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Event calendar management interface.*</p>
 
-    <img src="images/asset_create.PNG" alt="Asset Creation" width="50%">
-    <p><em>Asset creation interface.</em></p>
+<img src="images/asset_create.PNG" alt="Asset Creation" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Asset creation interface.*</p>
 
-    <img src="images/asset_manage.PNG" alt="Asset Management" width="50%">
-    <p><em>Asset management interface.</em></p>
+<img src="images/asset_manage.PNG" alt="Asset Management" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Asset management interface.*</p>
 
-    <img src="images/store_create.PNG" alt="Store Creation" width="50%">
-    <p><em>Store creation interface.</em></p>
+<img src="images/store_create.PNG" alt="Store Creation" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Store creation interface.*</p>
 
-    <img src="images/store_manage.PNG" alt="Store Management" width="50%">
-    <p><em>Store management interface.</em></p>
+<img src="images/store_manage.PNG" alt="Store Management" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Store management interface.*</p>
 
-    <img src="images/client_create.PNG" alt="Client Creation" width="50%">
-    <p><em>Client creation interface.</em></p>
+<img src="images/client_create.PNG" alt="Client Creation" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Client creation interface.*</p>
 
-    <img src="images/client_manage.PNG" alt="Client Management" width="50%">
-    <p><em>Client management interface.</em></p>
-</div>
+<img src="images/client_manage.PNG" alt="Client Management" width="50%" style="display: block; margin: 0 auto;">
+<p style="text-align: center;">*Client management interface.*</p>
 *Client management interface.*
 
 ### Key Benefits
