@@ -1,3 +1,7 @@
+<!-- Include FullCalendar CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
 @{
     ViewData["Title"] = "Calendar";
 }
@@ -11,8 +15,117 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <!-- Calendar content will be added here -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addEventModal">Add Event</button>
             <div id="calendar"></div>
         </div>
     </div>
 </div>
+
+<!-- Add Event Modal -->
+<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Add Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEventForm">
+                    <div class="mb-3">
+                        <label for="eventTitle" class="form-label">Event Title</label>
+                        <input type="text" class="form-control" id="eventTitle" name="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDate" class="form-label">Event Date</label>
+                        <input type="date" class="form-control" id="eventDate" name="Date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventColor" class="form-label">Event Color</label>
+                        <input type="color" class="form-control" id="eventColor" name="Color" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventClient" class="form-label">Event Client</label>
+                        <select class="form-control" id="eventClient" name="Client" required>
+                            <option value="">-- Select Client --</option>
+                            @if (ViewData["Clients"] != null)
+                            {
+                                var clients = ViewData["Clients"] as List<MultisiteEventing.Models.Client>;
+                                if (clients != null)
+                                {
+                                    foreach (var client in clients)
+                                    {
+                                        <option value="@client.Id">@client.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="complimentaryClients" class="form-label">Complimentary Clients</label>
+                        <select multiple class="form-control" id="complimentaryClients" name="ComplimentaryClients">
+                            @if (ViewData["Clients"] != null)
+                            {
+                                var clients = ViewData["Clients"] as List<MultisiteEventing.Models.Client>;
+                                if (clients != null)
+                                {
+                                    foreach (var client in clients)
+                                    {
+                                        <option value="@client.Id">@client.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addEvent()">Save Event</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek', // Use timeGridWeek for Outlook-like view
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    {
+                        title: 'Event 1',
+                        start: '2023-05-01',
+                        color: '#378006'
+                    },
+                    {
+                        title: 'Event 2',
+                        start: '2023-05-05',
+                        color: '#ff0000'
+                    }
+                ],
+                eventColor: '#378006'
+            });
+            calendar.render();
+        });
+
+        function addEvent() {
+            var form = $('#addEventForm');
+            var eventData = {
+                title: form.find('input[name="Title"]').val(),
+                start: form.find('input[name="Date"]').val(),
+                color: form.find('input[name="Color"]').val(),
+                client: form.find('select[name="Client"]').val(),
+                complimentaryClients: form.find('select[name="ComplimentaryClients"]').val()
+            };
+
+            var calendarEl = document.getElementById('calendar');
+            var calendar = FullCalendar.Calendar.getCalendar(calendarEl);
+            calendar.addEvent(eventData);
+
+            $('#addEventModal').modal('hide');
+        }
+    </script>
+}
