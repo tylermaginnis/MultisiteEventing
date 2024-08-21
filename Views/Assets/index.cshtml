@@ -1,0 +1,110 @@
+@{
+    ViewData["Title"] = "Assets";
+}
+
+<div class="container">
+    <h1 class="display-4 text-center">Assets</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="text-center">This is the Assets view where you can see all the scheduled events.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Asset content will be added here -->
+            <div id="assets">
+                <div class="asset-actions">
+                    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Assets")'">Add Asset</button>
+                </div>
+                <div class="asset-search">
+                    <input type="text" id="searchAsset" placeholder="Search by name or category" onkeyup="searchAssets()">
+                </div>
+                <div class="asset-list">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Unit of Measure</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var asset in Model)
+                            {
+                                <tr>
+                                    <td>@asset.Name</td>
+                                    <td>@asset.Description</td>
+                                    <td>@asset.Category</td>
+                                    <td>@asset.UnitOfMeasure</td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal-@asset.Id">Update</button>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@asset.Id">Delete</button>
+
+                                        <div class="modal fade" id="updateModal-@asset.Id" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel-@asset.Id" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="updateModalLabel-@asset.Id">Update Asset</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form asp-action="Edit" asp-controller="Assets" method="post">
+                                                            <input type="hidden" name="id" value="@asset.Id" />
+                                                            <div class="mb-3">
+                                                                <label for="name-@asset.Id" class="form-label">Name</label>
+                                                                <input type="text" class="form-control" id="name-@asset.Id" name="Name" value="@asset.Name" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="description-@asset.Id" class="form-label">Description</label>
+                                                                <input type="text" class="form-control" id="description-@asset.Id" name="Description" value="@asset.Description">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="category-@asset.Id" class="form-label">Category</label>
+                                                                <input type="text" class="form-control" id="category-@asset.Id" name="Category" value="@asset.Category" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="unitOfMeasure-@asset.Id" class="form-label">Unit of Measure</label>
+                                                                <input type="text" class="form-control" id="unitOfMeasure-@asset.Id" name="UnitOfMeasure" value="@asset.UnitOfMeasure" required>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal fade" id="deleteModal-@asset.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel-@asset.Id" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel-@asset.Id">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete the asset "@asset.Name"?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <form asp-action="Delete" asp-controller="Assets" method="post" style="display:inline;">
+                                                            <input type="hidden" name="id" value="@asset.Id" />
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
