@@ -148,10 +148,15 @@
                 end: form.find('input[name="Date"]').val() + 'T' + form.find('input[name="EndTime"]').val(),
                 color: form.find('input[name="Color"]').val(),
                 client: form.find('select[name="Client"]').val(),
-                complimentaryClients: form.find('select[name="ComplimentaryClients"]').val(),
-                store: form.find('select[name="Store"]').val()
+                complimentaryClients: form.find('select[name="ComplimentaryClients"]').val()
             };
-            calendar.addEvent(eventData);
+            var selectedStores = form.find('select[name="Store"]').val();
+            if (selectedStores) {
+                selectedStores.forEach(function(store) {
+                    var storeEventData = Object.assign({}, eventData, { store: store });
+                    calendar.addEvent(storeEventData);
+                });
+            }
 
             $('#addEventModal').modal('hide');
         }
