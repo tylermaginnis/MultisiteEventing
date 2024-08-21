@@ -4,6 +4,17 @@
 
 Welcome to MultisiteEventing, a powerful web application designed to streamline the management and scheduling of events across multiple locations. This user-friendly platform allows you to efficiently handle assets, clients, and stores associated with your events, ensuring a smooth and organized event planning process.
 
+### Demo Images
+
+![Dashboard](images/dashboard.png)
+*Dashboard view of MultisiteEventing.*
+
+![Asset Management](images/asset_management.png)
+*Asset management interface.*
+
+![Client Management](images/client_management.png)
+*Client management interface.*
+
 ### Key Benefits
 
 - **Efficient Management**: Easily create, view, update, and delete assets, clients, and stores, making event management straightforward and hassle-free.
