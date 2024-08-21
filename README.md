@@ -1,18 +1,34 @@
 # MultisiteEventing
 
-MultisiteEventing is a web application designed to manage and schedule events across multiple sites. This application allows users to create, view, update, and delete assets associated with events.
+## Overview for Business Users
+
+Welcome to MultisiteEventing, a powerful web application designed to streamline the management and scheduling of events across multiple locations. This user-friendly platform allows you to efficiently handle assets, clients, and stores associated with your events, ensuring a smooth and organized event planning process.
+
+### Key Benefits
+
+- **Efficient Management**: Easily create, view, update, and delete assets, clients, and stores.
+- **Search Functionality**: Quickly find assets by name or category.
+- **Responsive Design**: Enjoy a seamless user experience on any device.
+- **Modal Dialogs**: Simplify asset updates and deletions with intuitive modal dialogs.
+- **AJAX-Based Forms**: Experience faster form submissions for creating and updating clients without page reloads.
+- **Dynamic Store Management**: Add and remove store locations and contacts on the fly.
 
 ## Features
 
-- Create, view, update, and delete assets
+- Create, view, update, and delete assets, clients, and stores
 - Search assets by name or category
 - Responsive design for better user experience
 - Modal dialogs for asset updates and deletions
+- AJAX-based form submissions for creating and updating clients
+- Dynamic addition and removal of store locations and contacts
 
 ## File Structure
 
 - `Views/Assets/Create.cshtml`: View for creating a new asset
 - `Views/Assets/index.cshtml`: View for displaying and managing assets
+- `Views/Clients/Create.cshtml`: View for creating a new client
+- `Views/Clients/index.cshtml`: View for displaying and managing clients
+- `Views/Stores/Create.cshtml`: View for creating a new store
 - `.gitignore`: Specifies files and directories to be ignored by Git
 - `LICENSE`: License information for the software
 
