@@ -6,13 +6,247 @@
     <h1 class="display-4 text-center">Stores</h1>
     <div class="row">
         <div class="col-md-12">
-            <p class="text-center">This is the Stores view where you can see all the scheduled events.</p>
+            <p class="text-center">This is the Stores view where you can see all the available stores.</p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <!-- Calendar content will be added here -->
-            <div id="Stores"></div>
+            <!-- Store content will be added here -->
+            <div id="stores">
+                <div class="store-actions">
+                    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Stores")'">Add Store</button>
+                </div>
+                <div class="store-search">
+                    <input type="text" id="searchStore" placeholder="Search by name or location" onkeyup="searchStores()">
+                </div>
+                <div class="store-list">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Store Contacts</th>
+                                <th>Locations</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                @foreach (var store in Model)
+                                {
+                                    <tr>
+                                        <td>@store.Name</td>
+                                        <td style="background-color: white;">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Phone</th>
+                                                        <th>Email</th>
+                                                        <th>Role</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var contact in store.Contacts ?? Enumerable.Empty<MultisiteEventing.Models.Contact>())
+                                                    {
+                                                        <tr>
+                                                            <td>@contact.Name</td>
+                                                            <td>@contact.Phone</td>
+                                                            <td>@contact.Email</td>
+                                                            <td>@contact.Role</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            @foreach (var location in store.Locations ?? Enumerable.Empty<MultisiteEventing.Models.Location>())
+                                            {
+                                                <a href="#" onclick="toggleLocationDetails(@location.Id)">@location.DisplayId - @location.Address.City, @location.Address.State</a><br>
+                                            }
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal-@store.Id">Update</button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@store.Id">Delete</button>
+                                        </td>
+                                    </tr>
+                                    @foreach (var location in store.Locations ?? Enumerable.Empty<MultisiteEventing.Models.Location>())
+                                    {
+                                        <tr id="location-details-@location.Id" style="display:none;">
+                                            <td colspan="4">
+                                                <form asp-action="EditLocation" asp-controller="Stores" method="post" id="location-form-@location.Id">
+                                                    <input type="hidden" name="id" value="@location.Id" />
+                                                    <div class="mb-3">
+                                                        <label for="displayId-@location.Id" class="form-label">Display ID</label>
+                                                        <input type="text" class="form-control" id="displayId-@location.Id" name="DisplayId" value="@location.DisplayId" readonly>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="street-@location.Id" class="form-label">Street</label>
+                                                        <input type="text" class="form-control" id="street-@location.Id" name="Address.Street" value="@location.Address.Street" readonly>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="city-@location.Id" class="form-label">City</label>
+                                                        <input type="text" class="form-control" id="city-@location.Id" name="Address.City" value="@location.Address.City" readonly>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="state-@location.Id" class="form-label">State</label>
+                                                        <input type="text" class="form-control" id="state-@location.Id" name="Address.State" value="@location.Address.State" readonly>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="zipCode-@location.Id" class="form-label">Zip Code</label>
+                                                        <input type="text" class="form-control" id="zipCode-@location.Id" name="Address.ZipCode" value="@location.Address.ZipCode" readonly>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Location Contacts</label>
+                                                        <table class="table table-bordered" id="location-contacts-@store.Id-@location.Id">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Name</th>
+                                                                    <th>Phone</th>
+                                                                    <th>Email</th>
+                                                                    <th>Role</th>
+                                                                    <th>Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var locContact in location.Contacts ?? Enumerable.Empty<MultisiteEventing.Models.Contact>())
+                                                                {
+                                                                    <tr>
+                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Name" value="@locContact.Name" readonly></td>
+                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Phone" value="@locContact.Phone" readonly></td>
+                                                                        <td><input type="email" class="form-control" name="Contacts[@locContact.Id].Email" value="@locContact.Email" readonly></td>
+                                                                        <td><input type="text" class="form-control" name="Contacts[@locContact.Id].Role" value="@locContact.Role" readonly></td>
+                                                                        <td>
+                                                                            <button type="button" class="btn btn-warning" onclick="toggleEditContact(@locContact.Id)">Edit</button>
+                                                                            <button type="button" class="btn btn-danger" onclick="deleteContact(@locContact.Id)">Delete</button>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                        <button type="button" class="btn btn-primary" onclick="addContact(@store.Id, @location.Id)">Add Contact</button>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" onclick="toggleLocationDetails(@location.Id)">Cancel</button>
+                                                        <button type="button" class="btn btn-warning" onclick="toggleEditLocation(@location.Id)">Edit</button>
+                                                        <button type="submit" class="btn btn-primary" id="save-button-@location.Id" style="display:none;">Save</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">No stores available.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleLocationDetails(locationId) {
+        var detailsRow = document.getElementById("location-details-" + locationId);
+        if (detailsRow.style.display === "none") {
+            detailsRow.style.display = "";
+        } else {
+            detailsRow.style.display = "none";
+        }
+    }
+
+    function toggleEditLocation(locationId) {
+        var form = document.getElementById("location-form-" + locationId);
+        var inputs = form.querySelectorAll("input");
+        var saveButton = document.getElementById("save-button-" + locationId);
+        var editButton = document.querySelector("button[onclick='toggleEditLocation(" + locationId + ")']");
+
+        inputs.forEach(input => {
+            if (input.readOnly) {
+                input.readOnly = false;
+                saveButton.style.display = "";
+                editButton.style.display = "none";
+            } else {
+                input.readOnly = true;
+                saveButton.style.display = "none";
+                editButton.style.display = "";
+            }
+        });
+    }
+
+    function saveLocation(locationId) {
+        var form = document.getElementById("location-form-" + locationId);
+        form.submit();
+    }
+
+    function toggleEditContact(contactId) {
+        var contactRow = document.querySelector(`input[name='Contacts[${contactId}].Name']`).closest('tr');
+        var inputs = contactRow.querySelectorAll("input");
+        inputs.forEach(input => {
+            input.readOnly = !input.readOnly;
+        });
+    }
+
+    function deleteContact(contactId) {
+        // Implement the logic to delete the contact
+    }
+    function addContact(storeId, locationId) {
+        var locationTable = document.getElementById("location-contacts-" + storeId + "-" + locationId);
+        if (locationTable) {
+            var newRow = locationTable.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" name="Contacts[New].Name" class="form-control" placeholder="Name"></td>
+                <td><input type="text" name="Contacts[New].Phone" class="form-control" placeholder="Phone"></td>
+                <td><input type="email" name="Contacts[New].Email" class="form-control" placeholder="Email"></td>
+                <td><input type="text" name="Contacts[New].Role" class="form-control" placeholder="Role"></td>
+                <td><button type="button" class="btn btn-success" onclick="saveNewContact(${storeId}, ${locationId}, this)">Save</button></td>
+            `;
+        } else {
+            console.error(`Element with id "location-contacts-${storeId}-${locationId}" not found.`);
+        }
+    }
+
+    function saveNewContact(storeId, locationId, button) {
+        var newRow = button.closest('tr');
+        var inputs = newRow.querySelectorAll("input");
+        var newContact = {};
+
+        inputs.forEach(input => {
+            var name = input.name.split('.')[1];
+            newContact[name] = input.value;
+        });
+
+        // Implement the logic to save the new contact by hitting the controller action
+        fetch('/Stores/SaveStoreLocationContact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ storeId: storeId, locationId: locationId, contact: newContact })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // After saving, update the row to remove the save button and make the inputs read-only
+                inputs.forEach(input => {
+                    input.readOnly = true;
+                });
+                button.style.display = "none";
+            } else {
+                // Handle error
+                alert('Failed to save contact');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to save contact');
+        });
+    }
+</script>
