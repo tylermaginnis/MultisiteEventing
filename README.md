@@ -5,32 +5,32 @@
 Welcome to MultisiteEventing, a powerful web application designed to streamline the management and scheduling of events across multiple locations. This user-friendly platform allows you to efficiently handle assets, clients, and stores associated with your events, ensuring a smooth and organized event planning process.
 
 ### Demo Images
-<img src="images/dashboard.PNG" alt="Dashboard" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Dashboard view of MultisiteEventing.*</p>
 
-<img src="images/event_create.PNG" alt="Event Creation" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Event creation interface.*</p>
+![Dashboard](images/dashboard.PNG)
+*Dashboard view of MultisiteEventing.*
 
-<img src="images/event_manage.PNG" alt="Event Management" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Event calendar management interface.*</p>
+![Event Creation](images/event_create.PNG)
+*Event creation interface.*
 
-<img src="images/asset_create.PNG" alt="Asset Creation" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Asset creation interface.*</p>
+![Event Management](images/event_manage.PNG)
+*Event calendar management interface.*
 
-<img src="images/asset_manage.PNG" alt="Asset Management" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Asset management interface.*</p>
+![Asset Creation](images/asset_create.PNG)
+*Asset creation interface.*
 
-<img src="images/store_create.PNG" alt="Store Creation" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Store creation interface.*</p>
+![Asset Management](images/asset_manage.PNG)
+*Asset management interface.
 
-<img src="images/store_manage.PNG" alt="Store Management" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Store management interface.*</p>
+![Store Creation](images/store_create.PNG)
+*Store creation interface.*
 
-<img src="images/client_create.PNG" alt="Client Creation" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Client creation interface.*</p>
+![Store Management](images/store_manage.PNG)
+*Store management interface.*
 
-<img src="images/client_manage.PNG" alt="Client Management" width="50%" style="display: block; margin: 0 auto;">
-<p style="text-align: center;">*Client management interface.*</p>
+![Client Creation](images/client_create.PNG)
+*Client creation interface.*
+
+![Client Management](images/client_manage.PNG)
 *Client management interface.*
 
 ### Key Benefits
