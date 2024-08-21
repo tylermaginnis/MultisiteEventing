@@ -1,0 +1,73 @@
+@model MultisiteEventing.Models.Client
+
+@{
+    ViewData["Title"] = "Create Client";
+}
+
+<h1>Create Client</h1>
+
+<h4>Client</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="createClientForm">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Assets" class="control-label"></label>
+                <select asp-for="Assets" class="form-control">
+                    <option value="">-- Select Asset --</option>
+                    @if (ViewData["Assets"] != null)
+                    {
+                        var assets = ViewData["Assets"] as List<MultisiteEventing.Models.AssetModel>;
+                        if (assets != null)
+                        {
+                            foreach (var asset in assets)
+                            {
+                                <option value="@asset.Id">@asset.Name</option>
+                            }
+                        }
+                    }
+                </select>
+                <span asp-validation-for="Assets" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Create" class="btn btn-primary" onclick="createClient()" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function createClient() {
+            var form = $('#createClientForm');
+            $.ajax({
+                url: '@Url.Action("Create", "Clients")',
+                type: 'POST',
+                data: form.serialize(),
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = '@Url.Action("Index", "Clients")';
+                    } else {
+                        alert('Error creating client.');
+                    }
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,141 @@
+@model MultisiteEventing.Models.Store
+
+@{
+    ViewData["Title"] = "Create Store";
+}
+
+<div class="container">
+    <h1 class="display-4 text-center">Create Store</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <form asp-action="Create" asp-controller="Stores" method="post">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Locations</label>
+                    <div id="locations-container">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="Locations[0].Address.Street" placeholder="Street" required>
+                            <input type="text" class="form-control" name="Locations[0].Address.City" placeholder="City" required>
+                            <input type="text" class="form-control" name="Locations[0].Address.State" placeholder="State" required>
+                            <input type="text" class="form-control" name="Locations[0].Address.ZipCode" placeholder="Zip Code" required>
+                            <button type="button" class="btn btn-danger" onclick="removeLocation(this)">Remove</button>
+                        </div>
+                        <label class="form-label">Location Contacts</label>
+                        <div id="location-contacts-container-0">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="Locations[0].Contacts[0].Name" placeholder="Contact Name" required>
+                                <input type="text" class="form-control" name="Locations[0].Contacts[0].Phone" placeholder="Contact Phone" required>
+                                <input type="email" class="form-control" name="Locations[0].Contacts[0].Email" placeholder="Contact Email">
+                                <input type="text" class="form-control" name="Locations[0].Contacts[0].Role" placeholder="Contact Role" required>
+                                <button type="button" class="btn btn-danger" onclick="removeContact(this)">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary mb-2" onclick="addContact(0)">Add Contact</button>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addLocation()">Add Location</button>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Store Contacts</label>
+                    <div id="store-contacts-container">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="Contacts[0].Name" placeholder="Contact Name" required>
+                            <input type="text" class="form-control" name="Contacts[0].Phone" placeholder="Contact Phone" required>
+                            <input type="email" class="form-control" name="Contacts[0].Email" placeholder="Contact Email">
+                            <input type="text" class="form-control" name="Contacts[0].Role" placeholder="Contact Role" required>
+                            <button type="button" class="btn btn-danger" onclick="removeContact(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addStoreContact()">Add Contact</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Stores")'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let locationIndex = 1;
+    let contactIndex = 1;
+    let storeContactIndex = 1;
+
+    function addLocation() {
+        var container = document.getElementById("locations-container");
+        var inputGroup = document.createElement("div");
+        inputGroup.className = "input-group mb-2";
+        inputGroup.innerHTML = `
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Address.Street" placeholder="Street" required>
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Address.City" placeholder="City" required>
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Address.State" placeholder="State" required>
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Address.ZipCode" placeholder="Zip Code" required>
+            <button type="button" class="btn btn-danger" onclick="removeLocation(this)">Remove</button>
+        `;
+        container.appendChild(inputGroup);
+
+        var contactContainer = document.createElement("div");
+        contactContainer.id = `location-contacts-container-${locationIndex}`;
+        contactContainer.innerHTML = `
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="Locations[${locationIndex}].Contacts[0].Name" placeholder="Contact Name" required>
+                <input type="text" class="form-control" name="Locations[${locationIndex}].Contacts[0].Phone" placeholder="Contact Phone" required>
+                <input type="email" class="form-control" name="Locations[${locationIndex}].Contacts[0].Email" placeholder="Contact Email">
+                <input type="text" class="form-control" name="Locations[${locationIndex}].Contacts[0].Role" placeholder="Contact Role" required>
+                <button type="button" class="btn btn-danger" onclick="removeContact(this)">Remove</button>
+            </div>
+            <button type="button" class="btn btn-primary mb-2" onclick="addContact(${locationIndex})">Add Contact</button>
+        `;
+        container.appendChild(contactContainer);
+
+        locationIndex++;
+    }
+
+    function addContact(locationIndex) {
+        var container = document.getElementById(`location-contacts-container-${locationIndex}`);
+        var inputGroup = document.createElement("div");
+        inputGroup.className = "input-group mb-2";
+        inputGroup.innerHTML = `
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Contacts[${contactIndex}].Name" placeholder="Contact Name" required>
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Contacts[${contactIndex}].Phone" placeholder="Contact Phone" required>
+            <input type="email" class="form-control" name="Locations[${locationIndex}].Contacts[${contactIndex}].Email" placeholder="Contact Email">
+            <input type="text" class="form-control" name="Locations[${locationIndex}].Contacts[${contactIndex}].Role" placeholder="Contact Role" required>
+            <button type="button" class="btn btn-danger" onclick="removeContact(this)">Remove</button>
+        `;
+        container.appendChild(inputGroup);
+
+        contactIndex++;
+    }
+
+    function addStoreContact() {
+        var container = document.getElementById("store-contacts-container");
+        var inputGroup = document.createElement("div");
+        inputGroup.className = "input-group mb-2";
+        inputGroup.innerHTML = `
+            <input type="text" class="form-control" name="Contacts[${storeContactIndex}].Name" placeholder="Contact Name" required>
+            <input type="text" class="form-control" name="Contacts[${storeContactIndex}].Phone" placeholder="Contact Phone" required>
+            <input type="email" class="form-control" name="Contacts[${storeContactIndex}].Email" placeholder="Contact Email">
+            <input type="text" class="form-control" name="Contacts[${storeContactIndex}].Role" placeholder="Contact Role" required>
+            <button type="button" class="btn btn-danger" onclick="removeContact(this)">Remove</button>
+        `;
+        container.appendChild(inputGroup);
+
+        storeContactIndex++;
+    }
+
+    function removeLocation(button) {
+        var container = document.getElementById("locations-container");
+        container.removeChild(button.parentElement.nextElementSibling);
+        container.removeChild(button.parentElement);
+    }
+
+    function removeContact(button) {
+        var container = button.parentElement.parentElement;
+        container.removeChild(button.parentElement);
+    }
+</script>
+
